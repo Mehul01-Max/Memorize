@@ -8,56 +8,86 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["👻", "🎃", "🕷️", "😈", "💀", "🕸️", "🧙", "🙀", "👹", "😱", "☠️", "🍭"]
-    @State var CardCount = 4
+    var birds = ["🕊️", "🦅", "🦆", "🦜", "🐥", "🦢", "🐓", "🦃", "🦉", "🦉", "🦤", "🪿", "🐦‍⬛"]
+    let cars = ["🚗", "🚙", "🏎️", "🚕", "🚓", "🚘", "🚖", "🚔"]
+    let animals = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦇", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮"]
+    @State var currentCards: [String] = []
     var body: some View {
         VStack {
+            Text("Memorize!")
+                .font(.largeTitle)
             ScrollView {
                 Cards
             }
             Spacer()
-            CardCountAdjusters
+            CardButtons
+        }
+        .onAppear {
+            currentCards = birds.shuffled()
         }
         .padding()
         
     }
     var Cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
-            ForEach (0..<CardCount, id: \.self) { index in
-                CardView(Content: emojis[index])
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))]) {
+            ForEach (currentCards.indices, id: \.self) { index in
+                CardView(Content: currentCards[index])
                     .aspectRatio(2/3, contentMode: .fit)
             }
         }
         .foregroundColor(.orange)
     }
-    var CardCountAdjusters: some View {
+    var CardButtons: some View {
         HStack {
-            CardRemover
             Spacer()
-            CardAdder
+            birdCards
+            Spacer()
+            carCards
+            Spacer()
+            animalCards
+            Spacer()
         }
-        .imageScale(.large)
-        .font(.largeTitle)
+        .foregroundStyle(.blue)
+ 
     }
-    func CardCountAdjuster(by Offset: Int, symbol: String) -> some View {
-        Button(action: {
-            CardCount = CardCount + Offset
-        }, label:  {
-            Image(systemName: symbol)
-        })
-        .disabled(CardCount + Offset < 1 || CardCount + Offset > emojis.count)
+    var birdCards: some View {
+        VStack {
+            Button(action: {
+                currentCards = birds.shuffled()
+            }, label: {
+                Image(systemName: "bird")
+            })
+            .font(.largeTitle)
+            Text("Birds")
+        }
     }
-    var CardAdder: some View {
-        CardCountAdjuster(by: +1, symbol: "rectangle.stack.badge.plus.fill")
-        
+    var carCards: some View {
+        VStack {
+            Button(action: {
+                currentCards = cars.shuffled()
+            }, label: {
+                Image(systemName: "car")
+            })
+            .font(.largeTitle)
+            Text("Cars")
+        }
     }
-    var CardRemover: some View {
-        CardCountAdjuster(by: -1, symbol: "rectangle.stack.badge.minus.fill")
+    var animalCards: some View {
+        VStack {
+            Button(action: {
+                currentCards = animals.shuffled()
+            }, label: {
+                Image(systemName: "pawprint")
+            })
+            .font(.largeTitle)
+            Text("Animals")
+            
+        }
     }
 
 }
 struct CardView: View {
-    @State var isFaceUp = true
+    @State var isFaceUp = false
     var Content: String
     var body: some View {
 
